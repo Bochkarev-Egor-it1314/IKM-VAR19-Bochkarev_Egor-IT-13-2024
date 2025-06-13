@@ -1,0 +1,83 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include "windows.h"
+#include "binary_tree.h"
+
+using namespace std;
+
+// проверка на то, является ли строка числом
+bool isValidNumber(string& s)
+{
+    if (s.empty())
+    {
+        return false;
+    }
+
+    for (char c : s)
+    {
+        if (!isdigit(c) && c != '-')
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main()
+{
+    setlocale(LC_ALL, "RU");
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+
+    ifstream file("C:\\work\\c++\\tree_code.txt"); // вставить сюда путь к файлу
+
+    // проверка на существование файла
+    if (!file)
+    {
+        cout << "Не удалось открыть файл \n";
+        exit;
+    }
+    else
+    {
+        BinaryTree tree;
+        string line;
+        int line_number = 0;
+
+        // обработка ошибок
+        while (getline(file, line))
+        {
+            line_number++;
+            istringstream iss_line(line);
+            string value_str, path;
+
+            if (!(iss_line >> value_str >> path))
+            {
+                cout << "Строка " << line_number << " пропущена: неверный формат.\n";
+                continue;
+            }
+
+            if (!isValidNumber(value_str))
+            {
+                cout << "Строка " << line_number << " пропущена: '" << value_str << "' не число.\n";
+                continue;
+            }
+
+            int value = stoi(value_str);
+
+            // вставка в дерево с обработкой ошибок
+            try
+            {
+                tree.insert(path, value);
+            }
+            catch (const exception& e)
+            {
+                cout << "Ошибка в строке " << line_number << ": " << e.what() << "\n";
+            }
+        }
+
+        cout << "Построенное бинарное дерево:\n";
+        tree.printTree();
+    }
+}

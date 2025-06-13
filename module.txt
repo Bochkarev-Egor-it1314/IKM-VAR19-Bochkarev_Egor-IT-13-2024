@@ -1,0 +1,98 @@
+#include "windows.h"
+#include "binary_tree.h"
+
+using namespace std;
+
+// конструктор
+BinaryTree::BinaryTree() 
+{
+    root = new TreeNode(0); // Корень со значением 0
+}
+
+// деконструктор
+BinaryTree::~BinaryTree()
+{
+    deleteTree(root);  // рекурсивно удаляем все узлы
+}
+
+// удаление дерева
+void BinaryTree::deleteTree(TreeNode* node)
+{
+    if (!node) return;
+    deleteTree(node->left);
+    deleteTree(node->right);
+    delete node;
+}
+
+// вставка элементов по пути
+void BinaryTree::insert(string& path, int value)
+{
+    setlocale(LC_ALL, "RU");
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+
+    // Проверка пути: только '1' и '0'
+    for (char c : path)
+    {
+        if (c != '0' && c != '1')
+        {
+            // генерация исключений
+            throw invalid_argument("Ошибка: путь должен содержать только символы '0' и '1'");
+        }
+    }
+
+    // по шагам идём по дереву
+    TreeNode* current = root;
+    for (size_t i = 0; i < path.length(); i++)
+    {
+        char dir = path[i];
+        if (dir == '0')
+        {
+            if (!current->left)
+            {
+                current->left = new TreeNode(-1);
+            }
+            current = current->left;
+        }
+        else
+        {
+            if (!current->right)
+            {
+                current->right = new TreeNode(-1);
+            }
+            current = current->right;
+        }
+    }
+
+    // Проверка на конфликт: если значение уже есть - ошибка
+    if (current->value != -1)
+    {
+        // генерация исключений
+        throw runtime_error("Ошибка: узел уже содержит значение");
+    }
+
+    current->value = value;
+}
+
+// вывод дерева
+void BinaryTree::print(TreeNode* node, int depth)
+{
+    if (!node)
+    {
+        return;
+    }
+
+    for (int i = 0; i < depth; i++)
+    {
+        cout << "-";
+    }
+    cout << node->value << "\n";
+    print(node->left, depth + 1);
+    print(node->right, depth + 1);
+}
+
+// вывод
+void BinaryTree::printTree()
+{
+    print(root);
+}
