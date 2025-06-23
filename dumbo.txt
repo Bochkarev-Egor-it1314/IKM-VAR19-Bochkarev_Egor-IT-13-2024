@@ -1,0 +1,28 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include "Shifr5.h"
+
+using namespace std;
+
+// Функция проверяет, является ли строка целым числом
+bool IsInteger(const string& input) {
+    // Используем строковый поток для попытки преобразовать строку в число
+    stringstream ss(input);
+    int number;
+    char leftover;
+
+    // Если удаётся считать число и в потоке больше ничего нет — это целое число
+    return ss >> number && !(ss >> leftover);
+}
+
+// Функция проверяет, является ли строка целым числом
+bool IsInteger1(const string& input) {
+    // Используем строковый поток для попытки преобразовать строку в число
+    stringstream ss(input);
+    int number;
+    char leftover;
+
+    // Если удаётся считать число и в потоке больше ничего нет — это целое число
+    return ss >> number && !(ss >> leftover);
+}
