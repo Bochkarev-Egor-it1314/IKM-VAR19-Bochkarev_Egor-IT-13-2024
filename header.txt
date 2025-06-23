@@ -1,36 +1,46 @@
-#ifndef BINARY_TREE_H
-#define BINARY_TREE_H
-
 #include <iostream>
 #include <string>
 
 using namespace std;
 
-// структура узла дерева
-struct TreeNode
-{
-    int value;
-    TreeNode* left;
-    TreeNode* right;
+bool IsInteger(const string& input);
 
-    TreeNode(int val) : value(val), left(nullptr), right(nullptr) {}
-};
-
-// структура дерева
-class BinaryTree
-{
-private:
-    TreeNode* root;
-
+class Task19 {
 public:
-    BinaryTree();
-    ~BinaryTree();
-    void insert(string& path, int value);
-    void print(TreeNode* node, int depth = 0);
-    void printTree();
+    // Узел бинарного дерева поиска
+    class Node
+    {
+    public:
+        int key;
+        Node* left;
+        Node* right;
 
-private:
-    void deleteTree(TreeNode* node);
+        Node(int key) : key(key), left(nullptr), right(nullptr) {}
+    };
+
+    // Класс бинарного дерева поиска
+    class BinaryTree {
+    private:
+        Node* root;
+
+        // Рекурсивный вывод дерева (визуализация)
+        void PrintRecursive(Node* node, const string& indent, bool last);
+
+    public:
+
+        // Конструктор
+        BinaryTree();
+
+        // Вставка элемента по пути
+        void Insert(string& path, int key);
+
+        // Функция запускающая вывод дерева
+        void Print();
+        
+    };
+
+    // Запуск программы
+    void Run();
 };
 
-#endif
+

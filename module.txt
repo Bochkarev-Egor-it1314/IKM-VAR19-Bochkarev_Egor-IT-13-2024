@@ -1,31 +1,19 @@
 #include "windows.h"
 #include "binary_tree.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
 // конструктор
-BinaryTree::BinaryTree() 
+Task19::BinaryTree::BinaryTree()
 {
-    root = new TreeNode(0); // Корень со значением 0
+    root = new Node(0); // Корень со значением 0
 }
 
-// деконструктор
-BinaryTree::~BinaryTree()
-{
-    deleteTree(root);  // рекурсивно удаляем все узлы
-}
-
-// удаление дерева
-void BinaryTree::deleteTree(TreeNode* node)
-{
-    if (!node) return;
-    deleteTree(node->left);
-    deleteTree(node->right);
-    delete node;
-}
-
-// вставка элементов по пути
-void BinaryTree::insert(string& path, int value)
+// Вставка элемента по пути
+void Task19::BinaryTree::Insert(string& path, int key)
 {
     setlocale(LC_ALL, "RU");
     SetConsoleCP(1251);
@@ -41,8 +29,8 @@ void BinaryTree::insert(string& path, int value)
         }
     }
 
-    // по шагам идём по дереву
-    TreeNode* current = root;
+    // По шагам идём по дереву
+    Node* current = root;
     for (size_t i = 0; i < path.length(); i++)
     {
         char dir = path[i];
@@ -50,7 +38,7 @@ void BinaryTree::insert(string& path, int value)
         {
             if (!current->left)
             {
-                current->left = new TreeNode(-1);
+                current->left = new Node(-1);
             }
             current = current->left;
         }
@@ -58,41 +46,114 @@ void BinaryTree::insert(string& path, int value)
         {
             if (!current->right)
             {
-                current->right = new TreeNode(-1);
+                current->right = new Node(-1);
             }
             current = current->right;
         }
     }
 
     // Проверка на конфликт: если значение уже есть - ошибка
-    if (current->value != -1)
+    if (current->key != -1)
     {
         // генерация исключений
         throw runtime_error("Ошибка: узел уже содержит значение");
     }
 
-    current->value = value;
+    current->key = key;
 }
 
-// вывод дерева
-void BinaryTree::print(TreeNode* node, int depth)
+// Функция запускающая вывод дерева
+void Task19::BinaryTree::Print()
 {
-    if (!node)
-    {
-        return;
-    }
-
-    for (int i = 0; i < depth; i++)
-    {
-        cout << "-";
-    }
-    cout << node->value << "\n";
-    print(node->left, depth + 1);
-    print(node->right, depth + 1);
+    PrintRecursive(root, "", true);
 }
 
-// вывод
-void BinaryTree::printTree()
+// Рекурсивный вывод дерева (визуализация)
+void Task19::BinaryTree::PrintRecursive(Node* node, const string& indent, bool last)
 {
-    print(root);
+    if (!node) return;
+
+    cout << indent;
+
+    if (last)
+    {
+        cout << "|_>";
+    }
+    else
+    {
+        cout << "|->";
+    }
+
+    cout << node->key << endl;
+
+    string newIndent = indent + (last ? "  " : "| ");
+
+    bool hasLeft = (node->left != nullptr);
+    bool hasRight = (node->right != nullptr);
+
+    if (hasRight)
+    {
+        PrintRecursive(node->right, newIndent, !hasLeft); // сначала правое
+    }
+        
+
+    if (hasLeft)
+    {
+        PrintRecursive(node->left, newIndent, true); // потом левое
+    }
+        
+}
+
+// Запуск программы
+void Task19::Run()
+{
+    ifstream file("C:\\work\\c++\\tree_code.txt"); // вставить сюда путь к файлу
+
+    // проверка на существование файла
+    if (!file)
+    {
+        cout << "Не удалось открыть файл \n";
+        exit;
+    }
+    else
+    {
+        BinaryTree tree;
+        string line;
+        int line_number = 0;
+
+        // обработка ошибок
+        while (getline(file, line))
+        {
+            line_number++;
+            istringstream iss_line(line);
+            string key_str, path;
+
+            if (!(iss_line >> key_str >> path))
+            {
+                cout << "Строка " << line_number << " пропущена: неверный формат.\n";
+                continue;
+            }
+
+            if (!IsInteger(key_str))
+            {
+                cout << "Строка " << line_number << " пропущена: '" << key_str << "' не число.\n";
+                continue;
+            }
+
+            int key = stoi(key_str);
+
+            // вставка в дерево с обработкой ошибок
+            try
+            {
+                tree.Insert(path, key);
+            }
+            catch (const exception& e)
+            {
+                cout << "Ошибка в строке " << line_number << ": " << e.what() << "\n";
+            }
+        }
+
+        cout << "Построенное бинарное дерево:\n";
+        tree.Print();
+    }
 }

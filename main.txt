@@ -1,28 +1,19 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
 #include "windows.h"
 #include "binary_tree.h"
 
 using namespace std;
 
-// проверка на то, является ли строка числом
-bool isValidNumber(string& s)
-{
-    if (s.empty())
-    {
-        return false;
-    }
+// Функция для отображения меню
+void ShowMenu() {
 
-    for (char c : s)
-    {
-        if (!isdigit(c) && c != '-')
-        {
-            return false;
-        }
-    }
-    return true;
+    cout << "\n=== Главное меню ===\n";
+    cout << "1. Task19\n";
+    cout << "2. Условие\n";
+    cout << "0. Выход\n";
+    cout << "===================\n";
 }
 
 int main()
@@ -31,53 +22,50 @@ int main()
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
-    ifstream file("C:\\work\\c++\\tree_code.txt"); // вставить сюда путь к файлу
-
-    // проверка на существование файла
-    if (!file)
+    while (true)
     {
-        cout << "Не удалось открыть файл \n";
-        exit;
-    }
-    else
-    {
-        BinaryTree tree;
-        string line;
-        int line_number = 0;
+        ShowMenu();
+        int choice;
+        cout << "Выберите задачу -> ";
+        cin >> choice;
+        bool IsInteger(choice);
 
-        // обработка ошибок
-        while (getline(file, line))
+        if (IsInteger == true)
         {
-            line_number++;
-            istringstream iss_line(line);
-            string value_str, path;
+            while (cin.get() != '\n');
 
-            if (!(iss_line >> value_str >> path))
+            switch (choice)
             {
-                cout << "Строка " << line_number << " пропущена: неверный формат.\n";
-                continue;
+            case 0:
+            {
+                cout << "Программа завершена.\n";
+                return 0;
             }
-
-            if (!isValidNumber(value_str))
+            case 1:
             {
-                cout << "Строка " << line_number << " пропущена: '" << value_str << "' не число.\n";
-                continue;
+                Task19 task;
+                task.Run();
+                break;
             }
-
-            int value = stoi(value_str);
-
-            // вставка в дерево с обработкой ошибок
-            try
+            case 2:
             {
-                tree.insert(path, value);
+                cout << "В файле даны n целых чисел, и здесь же указан путь их размещения в бинарном дереве\n"
+                    "виде двоичного кода(коды не повторяются).Построить двоичное дерево целых чисел,\n"
+                    "в котором путь по дереву определяется указанным двоичным кодом в этом листе\n"
+                    "(1 – переход к правому потомку, 0 - переход к левому потомку).В корень автоматически заносится значение 0." << endl;
+                break;
             }
-            catch (const exception& e)
-            {
-                cout << "Ошибка в строке " << line_number << ": " << e.what() << "\n";
+            default:
+                cout << "Неверный выбор! Пожалуйста, выберите существующий пункт меню.\n";
             }
         }
+        else
+        {
+            cout << "ERROR";
+            break;
+        }
 
-        cout << "Построенное бинарное дерево:\n";
-        tree.printTree();
     }
+
+
 }
